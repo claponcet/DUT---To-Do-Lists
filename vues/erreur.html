@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Erreur</title>
+</head>
+<body>
+    <h1> Erreur </h1>
+
+    <?php
+
+    if (isset($this->tableauErreur)) {
+        foreach ($this->tableauErreur as $value){
+            echo "<p>$value</p>";
+        }
+    }
+    ?>
+
+    <button onclick="location.href='?'">Retour à l'accueil</button>
+
+</body>
+</html>
