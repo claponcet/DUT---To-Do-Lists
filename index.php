@@ -8,6 +8,8 @@ require_once(__DIR__.'/config/configuration.php');
 require_once(__DIR__.'/config/Autoload.php');
 Autoload::charger();
 
+session_start();
+
 $frontCtrl = new FrontController();
 
 

@@ -15,11 +15,13 @@ class GatewayListe
         $this->co=new Connexion($dsn,$user,$mdp);
     }
 
-    public function selectListesPubliques(): array
+    public function selectListesPubliques(int $premiereListe, int $nbListes): array
     {
         $tabPub= array();
-        $query="SELECT * FROM liste WHERE privee='NON'";
-        $this->co->executeQuery($query,array());
+        $query="SELECT * FROM liste WHERE privee=:priv ORDER BY idliste DESC LIMIT :premiere,:nbListes";
+        $this->co->executeQuery($query,array(':priv' => array('NON',PDO::PARAM_STR),
+            ':premiere' => array($premiereListe,PDO::PARAM_INT),
+            ':nbListes' => array($nbListes,PDO::PARAM_INT)));
         $resultats=$this->co->getResultats();
         foreach($resultats as $row)
         {
@@ -28,11 +30,14 @@ class GatewayListe
         return $tabPub;
     }
 
-    public function selectListesPrivees(int $id): array
+    public function selectListesPrivees(int $id,int $premiereListe, int $nbListes): array
     {
         $tabPriv = array();
-        $query='SELECT * FROM liste WHERE privee="OUI" AND idauteur=:idauteur ORDER BY (idliste)';
-        $this->co->executeQuery($query,array(':idauteur' => array($id,PDO::PARAM_INT)));
+        $query="SELECT * FROM liste WHERE privee=:priv AND idauteur=:idauteur ORDER BY idliste DESC LIMIT :premiere,:nbListes";
+        $this->co->executeQuery($query,array(':idauteur' => array($id,PDO::PARAM_INT),
+            ':priv' => array('OUI',PDO::PARAM_STR),
+            ':premiere' => array($premiereListe,PDO::PARAM_INT),
+            ':nbListes' => array($nbListes,PDO::PARAM_INT)));
         $resultats=$this->co->getResultats();
         foreach($resultats as $row)
         {
@@ -41,15 +46,21 @@ class GatewayListe
         return $tabPriv;
     }
 
-    //séparer nb listes publiques et privées
-    /*
-    public function nbListes() : int
+    public function nbListesPub() : int
     {
-        $query='SELECT COUNT(*) FROM liste';
-        $this->co->executeQuery($query,array());
+        $query='SELECT COUNT(*) FROM liste WHERE privee=:priv';
+        $this->co->executeQuery($query,array(':priv' => array('NON',PDO::PARAM_STR)));
         $resultats=$this->co->getResultats();
         return $resultats[0]['COUNT(*)'];
-    }*/
+    }
+
+    public function nbListesPriv(int $id) : int
+    {
+        $query='SELECT COUNT(*) FROM liste WHERE idauteur=:id';
+        $this->co->executeQuery($query,array(':id' => array($id,PDO::PARAM_INT)));
+        $resultats=$this->co->getResultats();
+        return $resultats[0]['COUNT(*)'];
+    }
 
     public function ajouterListePublique(string $titre) : void
     {

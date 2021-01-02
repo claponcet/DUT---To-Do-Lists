@@ -1,9 +1,8 @@
 <?php
 
 
-class ControleUtilisateur
+class ControleUtilisateur extends Controle
 {
-    private array $tableauErreur = array();
 
     function __construct(string $action)
     {
@@ -13,15 +12,15 @@ class ControleUtilisateur
             switch ($action) {
 
                 case "ALL_PRIV" :
-                    //$this->voirListesPriv($session->id);
+                    $this->voirListesPriv($_SESSION['id']);
                     break;
 
                 case "NEW_PRIV" :
-                    //$this->ajouterListePriv($session->id);
+                    $this->ajouterListePriv($_SESSION['id']);
                     break;
 
                 case "DECONNEXION" :
-                    //$this->deconnexion();
+                    $this->deconnexion();
                     break;
 
                 default:
@@ -48,13 +47,19 @@ class ControleUtilisateur
         $tabListes=array();
         $id = Validation::val_int($id, $this->tableauErreur);
 
+        $m = new ModeleDonnees();
+
+        $nbPages = $m->getNbPagesPriv($id);
+
+        $page = (isset($_GET['page'])) ? Validation::val_int($_GET['page'], $this->tableauErreur) : 1;
+        $page = 0 ? 1 : $page; //si la page est à zéro, on la met à 1, sinon on la laisse
+
         if (!empty($this->tableauErreur)) {
             require($chemin . $lesVues['erreur']);
         }
         else
         {
-            $m = new ModeleDonnees();
-            $tabListes=$m->getListesPrivees($id);
+            $tabListes=$m->getListesPrivees($id,$page);
 
             require($chemin . $lesVues['privee']);
         }
@@ -68,6 +73,7 @@ class ControleUtilisateur
         $titre = isset($_POST['titre']) ? $_POST['titre'] : "";
 
         Validation::val_titre($titre, $this->tableauErreur); //On valide le titre
+        $id = Validation::val_int($id, $this->tableauErreur);
 
         if (!empty($this->tableauErreur)) {
             require($chemin . $lesVues['erreur']);
@@ -81,6 +87,9 @@ class ControleUtilisateur
 
     function deconnexion()
     {
-        //vider la session ?
+        unset($_SESSION['login']);
+        unset($_SESSION['id']);
+
+        $this->accueil();
     }
 }

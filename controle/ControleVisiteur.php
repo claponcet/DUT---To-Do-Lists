@@ -1,9 +1,8 @@
 <?php
 
 
-class ControleVisiteur
+class ControleVisiteur extends Controle
 {
-    private array $tableauErreur = array();
 
     function __construct(?string $action)
     {
@@ -13,7 +12,7 @@ class ControleVisiteur
             switch ($action) {
 
                 case NULL:
-                    $this->accueil(); //appeler page d'accueil
+                    $this->accueil(); //appeler page d'accueil via la classe mère
                     break;
 
                 case "VOIR_LISTE" : //visualiser une liste avec ses tâches
@@ -41,8 +40,20 @@ class ControleVisiteur
                     break;
 
                 case "FORM_CO": //accéder au formulaire de connexion
+                    $this->affichageConnexion();
+                    break;
 
                 case "CONNEXION": //valider le formulaire de connexion
+                    $this->connexion();
+                    break;
+
+                case "FORM_INS":
+                    $this->affichageInscription();
+                    break;
+
+                case "INSCRIPTION":
+                    $this->inscription();
+                    break;
 
                 default:
                     $this->tableauErreur[] = "Mauvais appel php";
@@ -59,16 +70,6 @@ class ControleVisiteur
             require($chemin . $lesVues['erreur']);
         }
         exit(0);
-    }
-
-    function accueil()
-    {
-        global $chemin, $lesVues;
-
-        $m = new ModeleDonnees();
-        $tabPub = $m->getListesPubliques();
-
-        require($chemin . $lesVues['accueil']);
     }
 
     function voirListe(int $id)
@@ -181,6 +182,74 @@ class ControleVisiteur
             $m->deleteTache($idT);
 
             $this->voirListe($idL);
+        }
+    }
+
+    function affichageConnexion()
+    {
+        global $chemin, $lesVues;
+
+        require($chemin . $lesVues['connexion']);
+    }
+
+    function connexion()
+    {
+        global $chemin, $lesVues;
+
+        $login=$_POST['login'];
+        $mdp=$_POST['mdp'];
+
+        $login=Validation::val_login($login,$this->tableauErreur);
+        $mdp=Validation::val_mdp($mdp,$this->tableauErreur);
+
+        if (!empty($this->tableauErreur) || !isset($login) || !isset($mdp)) {
+            require($chemin . $lesVues['erreur']);
+        }
+        else {
+            $m=new ModeleUtilisateur();
+            $user=$m->connexion($login, $mdp);
+
+            if (isset($user)) {
+                $this->accueil();
+            }
+            else {
+                $this->tableauErreur[]='Erreur de connexion';
+                require($chemin . $lesVues['erreur']);
+                require($chemin . $lesVues['connexion']);
+            }
+        }
+    }
+
+    function affichageInscription()
+    {
+        global $chemin, $lesVues;
+
+        require($chemin . $lesVues['inscription']);
+    }
+
+    function inscription()
+    {
+        global $chemin, $lesVues;
+
+        $login=$_POST['login'];
+        $mdp=$_POST['mdp'];
+
+        $login=Validation::val_login($login,$this->tableauErreur);
+        $mdp=Validation::val_mdp($mdp,$this->tableauErreur);
+
+        if (!empty($this->tableauErreur) || !isset($login) || !isset($mdp)) {
+            require($chemin . $lesVues['erreur']);
+        }
+        else {
+            $m=new ModeleUtilisateur();
+            if($m->inscription($login, $mdp)) {
+                $this->accueil();
+            }
+            else {
+                $this->tableauErreur[]="Erreur : login déjà utilisé";
+                require($chemin . $lesVues['erreur']);
+                require($chemin . $lesVues['inscription']);
+            }
         }
     }
 }

@@ -17,8 +17,7 @@
         <img src="vues/photos/menu.png" id="menu" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
         To Do List
     </a>
-
-    <button type="button" onclick="location.href='vues/pageConnexion.html'" class="btn btn-dark">Connexion</button>
+    <button type="button" onclick="location.href='index.php?action=DECONNEXION'" class="btn btn-dark">Déconnexion</button>
 </nav>
 <br>
 
@@ -27,7 +26,9 @@
 
 <div id="privee">
     <a id=priv href="#">
-        <img src="vues/photos/lock.jpg" id="imgprivee" width="40" height="40">
+        <button type="button" onclick="location.href='index.php?'" class="btn btn-dark">
+        Voir les listes publiques
+        </button>
     </a>
 </div>
 
@@ -50,6 +51,24 @@
     else {
         echo '<p>Aucune liste à afficher</p>';
     }?>
+</div>
+
+<!-- LES PAGES -->
+<div id="pagination">
+    <?php
+    if ($nbPages > 1)
+    {
+        if ($page > 1)
+        {
+            echo '<a href="?action=ALL_PRIV&page=' . ($page-1) . '">page précédente <<< </a>';
+        }
+        echo '<a href="?action=ALL_PRIV&page=' . $page . '">  ' . $page . '  </a>';
+        if ($page<$nbPages)
+        {
+            echo '<a href="?action=ALL_PRIV&page=' . ($page+1) . '"> >>> page suivante</a>';
+        }
+    }
+    ?>
 </div>
 
 <!-- HIDDEN -->

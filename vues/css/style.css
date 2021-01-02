@@ -9,26 +9,16 @@
 
 }
 
-@font-face {
-    font-family: 'maven';
-    src: url('../polices/mavenpro-regular-webfont.woff2') format('woff2'),
-		url('../polices/mavenpro-regular-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
 .check:checked + label {
   text-decoration:line-through
 }
-
-
 
 #lieninscrit {
 
 	color: black;
 	font-size:small;
 }
+
 #co {
 	text-align: center;
 	width: 38%;
@@ -71,7 +61,6 @@ div:hover #sousmenu {
 
 body {
 	font-family:'acherusgrotesque-regular';
-	font-size: 19;
 	background-color: white;
 	padding-top: 9px;
 }
@@ -86,7 +75,6 @@ body {
 }
 
 a {
-	font:black;
 	text-decoration:none;
 	text-align:center;
 }
@@ -125,8 +113,7 @@ h1 {
 
 #modif {
 	text-align: center;
-	display: inline-flex;
-	margin-left: 38%;
+
 }
 
 #bDelete{
@@ -148,4 +135,12 @@ h1 {
 
 #formAjoutTache{
 	margin-top: 2%;
+}
+
+#pagination {
+	text-align: center;
+}
+
+#pagination a {
+	color: black;
 }

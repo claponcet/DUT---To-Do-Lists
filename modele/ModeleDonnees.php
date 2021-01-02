@@ -5,6 +5,7 @@ class ModeleDonnees
 {
     private GatewayListe $gwL;
     private GatewayTache $gwT;
+    private int $nbListesParPage=5;
 
     public function __construct()
     {
@@ -12,14 +13,32 @@ class ModeleDonnees
         $this->gwT = new GatewayTache();
     }
 
-    public function getListesPubliques()
+    public function getNbPagesPub()
     {
-        return $this->gwL->selectListesPubliques();
+        $totalListes = $this->gwL->nbListesPub();
+        $nbPages = ceil($totalListes/$this->nbListesParPage);
+        return $nbPages;
     }
 
-    public function getListesPrivees(int $id)
+    public function getNbPagesPriv(int $id)
     {
-        return $this->gwL->selectListesPrivees($id);
+        $totalListes = $this->gwL->nbListesPriv($id);
+        $nbPages = ceil($totalListes/$this->nbListesParPage);
+        return $nbPages;
+    }
+
+    public function getListesPubliques(int $page)
+    {
+        $premiereListe = ($page - 1) * $this->nbListesParPage;
+
+        return $this->gwL->selectListesPubliques($premiereListe,$this->nbListesParPage);
+    }
+
+    public function getListesPrivees(int $id, int $page)
+    {
+        $premiereListe = ($page - 1) * $this->nbListesParPage;
+
+        return $this->gwL->selectListesPrivees($id,$premiereListe,$this->nbListesParPage);
     }
 
     public function addPublique(String $titre)
